@@ -1,0 +1,43 @@
+# ─────────────────────────────────────────────────────────────
+# Este repositorio es una plantilla. Los documentos del cliente
+# nunca forman parte de ella.
+#
+# docs/entregables/ existe para alojar los entregables reales
+# mientras se trabaja. Su contenido no se versiona aquí jamás.
+# ─────────────────────────────────────────────────────────────
+
+docs/entregables/*
+!docs/entregables/README.md
+
+# Documentos ofimáticos y exportaciones: entran como material de
+# trabajo y no deben salir del disco de quien los usa.
+*.docx
+*.doc
+*.pdf
+*.xlsx
+*.pptx
+*.odt
+
+# Perfiles de plantilla ya extraídos: contienen la estructura
+# documental del cliente. Las versiones vacías sí se versionan.
+docs/plantillas/*.extraido.yaml
+
+# Matriz cargada con requisitos reales. La de muestra sí se versiona.
+docs/trazabilidad/matriz.local.csv
+
+# Entornos y secretos
+.env
+.env.*
+*.pem
+*.key
+kubeconfig*
+*secret*.yaml
+
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+
+# macOS
+.DS_Store
