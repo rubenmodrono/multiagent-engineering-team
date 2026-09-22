@@ -1,33 +1,39 @@
 ---
-description: Ciclo completo de una funcionalidad — diseño, implementación, revisiones y actualización documental
-argument-hint: <descripción de la funcionalidad o código de requisito>
+description: Full feature cycle — design, implementation, reviews and documentation update
+argument-hint: <feature description or requirement id>
 ---
 
-Coordina el ciclo completo para: **$ARGUMENTS**
+Coordinate the full cycle for: **$ARGUMENTS**
 
-Eres el coordinador. No implementas tú: delegas en los agentes del equipo y haces de puerta entre fases. Entre fase y fase, resume en tres líneas y continúa; sólo paras a preguntar cuando una decisión sea del usuario.
+You are the coordinator. You do not implement: you delegate to the team's agents and act
+as the gate between phases. Between phases, summarise in three lines and continue; stop
+to ask only when a decision belongs to the user.
 
-## Fase 1 — Diseño
-Lanza `arquitecto`. Si el cambio es local y no toca contratos ni infraestructura, sáltate esta fase y dilo.
-**Puerta:** si el arquitecto necesita una decisión de negocio, para y pregunta al usuario.
+## Phase 1 — Design
+Launch `architect`. If the change is local and touches neither contracts nor
+infrastructure, skip this phase and say so.
+**Gate:** if the architect needs a business decision, stop and ask the user.
 
-## Fase 2 — Implementación
-Lanza `desarrollador` con el ADR (si lo hay) y el requisito. Exige la nota de implementación con su apartado de **impacto documental**.
+## Phase 2 — Implementation
+Launch `developer` with the ADR (if any) and the requirement. Require the implementation
+note including its **documentation impact** section.
 
-## Fase 3 — Revisiones técnicas, en paralelo
-Lanza a la vez, en un solo bloque, `revisor-codigo`, `seguridad` y `qa-tester`.
-**Puerta:** los hallazgos BLOQUEANTE y CRÍTICO vuelven a `desarrollador` y se repite la fase 3 sobre el nuevo diff. No se avanza con bloqueantes abiertos.
+## Phase 3 — Technical reviews, in parallel
+Launch `code-reviewer`, `security` and `qa-tester` together, in a single block.
+**Gate:** BLOCKING and CRITICAL findings go back to `developer` and phase 3 repeats on the
+new diff. Nothing advances with open blockers.
 
-## Fase 4 — Trazabilidad
-Actualiza `docs/trazabilidad/matriz.csv` y ejecuta `python3 scripts/validar_trazabilidad.py`. Corrige lo que salga.
+## Phase 4 — Traceability
+Update `docs/traceability/matrix.csv` and run `python3 scripts/validate_traceability.py`.
+Fix whatever it reports.
 
-## Fase 5 — Documentación
-Invoca `/sync-docs` con el alcance de este cambio.
+## Phase 5 — Documentation
+Invoke `/sync-docs` with the scope of this change.
 
-## Cierre
-Informe final:
-- qué se entregó
-- hallazgos cerrados y hallazgos aceptados conscientemente, con su motivo
-- resultado real de la suite de tests, con números
-- secciones documentales tocadas
-- **qué queda pendiente**, explícito
+## Closing
+Final report:
+- what was delivered
+- findings closed, and findings knowingly accepted with the reason
+- real test suite result, with numbers
+- documentation sections touched
+- **what remains outstanding**, stated explicitly

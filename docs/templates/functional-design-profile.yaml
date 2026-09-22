@@ -1,0 +1,36 @@
+# EMPTY TEMPLATE — fill it in by running the `document-template` skill
+# over the current version of the client's Functional Design.
+# While this file has `extracted: false`, the documentation agents must
+# refuse to edit the deliverable and ask for the extraction first.
+
+extracted: false
+document: Functional Design
+code: null              # e.g. DF-PROJ-001
+source_format: null     # docx | confluence | markdown | asciidoc
+analysed_version: null
+
+cover:
+  fields: []
+
+version_control:
+  location: null
+  columns: []
+  version_convention: null
+
+structure: []           # [{n: "1", title: "Introduction", required: true}, ...]
+
+conventions:
+  section_numbering: null
+  figures: null
+  tables: null
+  pending_marker: null        # how THIS document marks what is not implemented
+  requirements: null
+  cross_references: null
+  diagrams: {tool: null, source: null}
+
+client_terminology: []
+
+prohibitions:
+  - do not renumber existing sections
+  - do not change the diagramming tool
+  - do not introduce new sections without recorded approval

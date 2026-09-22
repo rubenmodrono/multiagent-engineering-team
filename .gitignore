@@ -1,16 +1,16 @@
 # ─────────────────────────────────────────────────────────────
-# Este repositorio es una plantilla. Los documentos del cliente
-# nunca forman parte de ella.
+# This repository is a template. The client's documents are
+# never part of it.
 #
-# docs/entregables/ existe para alojar los entregables reales
-# mientras se trabaja. Su contenido no se versiona aquí jamás.
+# docs/deliverables/ exists to hold the real deliverables while
+# work is in progress. Its contents are never versioned here.
 # ─────────────────────────────────────────────────────────────
 
-docs/entregables/*
-!docs/entregables/README.md
+docs/deliverables/*
+!docs/deliverables/README.md
 
-# Documentos ofimáticos y exportaciones: entran como material de
-# trabajo y no deben salir del disco de quien los usa.
+# Office documents and exports: they come in as working material
+# and must not leave the disk of whoever is using them.
 *.docx
 *.doc
 *.pdf
@@ -18,14 +18,14 @@ docs/entregables/*
 *.pptx
 *.odt
 
-# Perfiles de plantilla ya extraídos: contienen la estructura
-# documental del cliente. Las versiones vacías sí se versionan.
-docs/plantillas/*.extraido.yaml
+# Template profiles already extracted: they carry the client's
+# document structure. The empty versions are versioned.
+docs/templates/*.extracted.yaml
 
-# Matriz cargada con requisitos reales. La de muestra sí se versiona.
-docs/trazabilidad/matriz.local.csv
+# A matrix loaded with real requirements. The sample one is versioned.
+docs/traceability/matrix.local.csv
 
-# Entornos y secretos
+# Environments and secrets
 .env
 .env.*
 *.pem

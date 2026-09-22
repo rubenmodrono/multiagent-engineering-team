@@ -1,96 +1,108 @@
-# Equipo de ingeniería multiagente
+# Multiagent engineering team
 
-Quince agentes especializados, cuatro flujos de trabajo y dos gates automáticos, sobre
-Claude Code. Cubre el ciclo de ingeniería y, sobre todo, el mantenimiento de los
-entregables documentales de Diseño Funcional y Diseño Técnico coherentes con el código.
+Fifteen specialised agents, four workflows and two automated gates, on Claude Code. Covers
+the engineering cycle and, above all, keeping the Functional Design and Technical Design
+deliverables consistent with the code.
 
-## Instalación
+## Installation
 
-Copia la carpeta `.claude/`, `CLAUDE.md`, `docs/` y `scripts/` a la raíz del repositorio
-del proyecto. Los agentes y comandos quedan disponibles en cuanto abras una sesión allí.
+Copy the `.claude/` folder, `CLAUDE.md`, `docs/` and `scripts/` into the root of the
+project's repository. The agents and commands become available as soon as you open a
+session there.
 
 ```
-.claude/agents/      15 agentes especializados
-.claude/skills/      conocimiento compartido (plantillas, estilo, trazabilidad, fuentes externas)
-.claude/commands/    los cuatro flujos
-.claude/settings.json permisos: lectura libre, escritura en entornos con confirmación
-docs/plantillas/     perfil de plantilla extraído de los documentos del cliente
-docs/entregables/    versiones vigentes de los documentos
-docs/trazabilidad/   matriz RF ↔ código ↔ test ↔ sección
-docs/adr/            decisiones de arquitectura
-scripts/             gates automáticos
+.claude/agents/      15 specialised agents
+.claude/skills/      shared knowledge (templates, style, traceability, external sources)
+.claude/commands/    the four workflows
+.claude/settings.json permissions: reads free, writes against environments need confirmation
+docs/templates/      template profile extracted from the client's documents
+docs/deliverables/   current versions of the documents
+docs/traceability/   matrix requirement ↔ code ↔ test ↔ section
+docs/adr/            architecture decisions
+scripts/             automated gates
 ```
 
-## Puesta en marcha, en orden
+## Getting started, in order
 
-1. **Extraer las plantillas reales.** Los perfiles de `docs/plantillas/` están vacíos.
-   Con la versión vigente de cada entregable delante:
-   > Extrae el perfil de plantilla del Diseño Técnico a partir de `docs/entregables/diseno-tecnico/DT-...v2.3.docx`
-   
-   Sin este paso, los agentes documentales no deben tocar los entregables. Es el paso que
-   hace que la documentación salga con el formato del cliente y no con uno inventado.
+1. **Extract the real templates.** The profiles in `docs/templates/` are empty. With the
+   current version of each deliverable in front of you:
 
-2. **Cargar la matriz de trazabilidad** con los requisitos reales, y ejecutar el validador:
+   > Extract the Technical Design template profile from
+   > `docs/deliverables/technical-design/DT-…v2.3.docx`
+
+   Without this step, the documentation agents must not touch the deliverables. It is the
+   step that makes the documentation come out in the client's format rather than an
+   invented one.
+
+2. **Load the traceability matrix** with the real requirements, and run the validator:
+
    ```bash
-   python3 scripts/validar_trazabilidad.py
+   python3 scripts/validate_traceability.py
    ```
-   La primera ejecución suele ser incómoda: saca los requisitos sin test y los
-   implementados sin sección documental. Ese es exactamente su trabajo.
 
-3. **Calibrar la voz del documento.** La primera vez que uses `editor-estilo`, pídele
-   que escriba la calibración de voz y guárdala. Las siguientes rondas parten de ahí.
+   The first run is usually uncomfortable: it surfaces the requirements with no tests and
+   the implemented ones with no documentation section. That is exactly its job.
 
-4. **Primer ciclo en seco**: `/revision-docs docs/entregables/...` sobre la versión
-   vigente, sin cambiar nada. Te dice el estado real de partida.
+3. **Calibrate the document's voice.** The first time you use `style-editor`, ask it to
+   write the voice calibration down and save it. Later rounds start from there.
 
-## Uso
+4. **A first dry run**: `/docs-review docs/deliverables/…` over the current version,
+   changing nothing. It tells you the real starting state.
 
-```
-/feature RF-041 baja de cliente con motivo obligatorio
-/sync-docs versión 2.4
-/revision-docs docs/entregables/diseno-tecnico/DT-PROY-001_v2.4.md
-/diagnostico-gateway 502 en /api/clientes desde preproducción
-```
-
-También puedes invocar un agente suelto: *"lanza el auditor-coherencia sobre la sección 5"*.
-
-## El ciclo documental
+## Usage
 
 ```
-R0 línea base ─→ R1 auditoría ─→ R2 redacción ─→ R3 verificación ─→ R4 estilo ─→ R5 entrega
-                      ▲                                │
-                      └────────── mientras queden ─────┘
-                                  bloqueantes
+/feature RF-041 customer deactivation with mandatory reason
+/sync-docs version 2.4
+/docs-review docs/deliverables/technical-design/DT-PROJ-001_v2.4.md
+/gateway-diagnosis 502 on /api/customers from pre-production
 ```
 
-Tres decisiones de diseño que sostienen el resultado:
+You can also invoke a single agent: *"run consistency-auditor over section 5"*.
 
-- **El auditor no escribe y el redactor no se audita.** Un agente que corrige lo que él
-  mismo escribió confirma su propio trabajo. La separación es lo que hace que la revisión
-  valga algo.
-- **La auditoría va en las dos direcciones.** Del documento al código (¿es cierto lo que
-  dice?) y del código al documento (¿está documentado lo que existe?). La segunda es la
-  que nadie hace y la que saca los endpoints, los parámetros de configuración y los
-  códigos de error que nunca llegaron al entregable.
-- **El estilo va al final.** Pulir texto que todavía va a cambiar es trabajo tirado, y
-  pulir antes de verificar hace que una frase falsa suene mejor.
+## The documentation cycle
 
-## Gates automáticos
+```
+R0 baseline ─→ R1 audit ─→ R2 writing ─→ R3 verification ─→ R4 style ─→ R5 delivery
+                   ▲                          │
+                   └───────── while blockers ─┘
+                              remain open
+```
 
-`validar_trazabilidad.py` — requisitos duplicados, rutas inexistentes, implementados sin
-test o sin sección documental, endpoints sin ruta en el gateway, ADRs fantasma.
+Three design decisions hold the result up:
 
-`invariantes_texto.py` — compara el texto antes y después del pase de estilo y falla si
-han cambiado identificadores, cifras, referencias `§x.y`, códigos `RF-nnn`, endpoints,
-tablas o bloques de código. Es la red que permite dejar reescribir prosa sin miedo a que
-se corrompa el contenido.
+- **The auditor does not write and the writer does not audit itself.** An agent correcting
+  what it wrote itself confirms its own work. The separation is what makes the review worth
+  anything.
+- **The audit runs in both directions.** From document to code (is what it says true?) and
+  from code to document (is what exists documented?). The second is the one nobody does,
+  and the one that surfaces the endpoints, configuration parameters and error codes that
+  never made it into the deliverable.
+- **Style comes last.** Polishing text that is still going to change is wasted work, and
+  polishing before verifying only makes a false sentence sound better.
 
-## Límites que conviene conocer
+## Automated gates
 
-- Los agentes leen el repositorio, no la cabeza de quien escribió el documento hace un
-  año. Las afirmaciones de intención o de negocio salen como `NO VERIFICABLE` y las tiene
-  que resolver una persona.
-- El pase de estilo mejora prosa; no convierte un documento vacío en uno bueno. Si una
-  sección no dice nada, el arreglo es contenido, no redacción.
-- Nada de esto sustituye la revisión humana antes de entregar al cliente. Acorta el
-  camino hasta ella.
+`validate_traceability.py` — duplicate requirements, non-existent paths, implemented items
+with no test or no documentation section, endpoints with no gateway route, phantom ADRs.
+
+`text_invariants.py` — compares the text before and after the style pass and fails if
+identifiers, figures, `§x.y` references, `RF-nnn` codes, endpoints, tables or code blocks
+have changed. It is the safety net that lets you allow prose to be rewritten without fearing
+that the content will be corrupted.
+
+## Limits worth knowing
+
+- The agents read the repository, not the mind of whoever wrote the document a year ago.
+  Claims of intent or of business come out as `NOT VERIFIABLE` and a person has to resolve
+  them.
+- The style pass improves prose; it does not turn an empty document into a good one. If a
+  section says nothing, the fix is content, not wording.
+- None of this replaces human review before delivering to the client. It shortens the road
+  to it.
+
+## A note on language
+
+The agents' instructions are in English. The deliverables they maintain are written in the
+project's working language, following the client's own document — the `writing-style` skill
+calibrates against it before touching anything.

@@ -1,0 +1,2 @@
+req,title,status,version,section_fd,section_td,components,endpoints,gateway_route,tests,adr,notes
+RF-001,Example — replace with the project's real requirements,pending,2.4,,,,,,,,sample row; delete when loading the real matrix
