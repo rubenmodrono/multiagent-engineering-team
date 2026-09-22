@@ -4,6 +4,72 @@ Fifteen specialised agents, four workflows and two automated gates, on Claude Co
 the engineering cycle and, above all, keeping the Functional Design and Technical Design
 deliverables consistent with the code.
 
+## The team
+
+Each agent has one scope and an explicit list of what it does **not** do. That boundary is
+the point: if two agents review the same thing, the second confirms the first instead of
+contributing.
+
+### Architecture and contracts
+
+| Agent | What it does | Where it stops |
+|---|---|---|
+| `architect` | Decides the shape of the system. Drivers, real options, decision matrix, ADR | Does not implement, does not write deliverables |
+| `data-architect` | Data model, data ownership between services, expand/contract migrations | Does not set service boundaries, does not run remote migrations |
+| `contract-designer` | REST and event contracts. Classifies every change as compatible or breaking before designing it | Does not implement the endpoint, does not configure the gateway |
+
+### Build and verify
+
+| Agent | What it does | Where it stops |
+|---|---|---|
+| `developer` | Scoped implementation, copying the repository's existing idiom | Does not touch contracts without an ADR, nor infrastructure, nor deliverables |
+| `code-reviewer` | Correctness defects in the diff, each with a concrete failure scenario | Does not opine on style, security or coverage |
+| `security` | Threat surface, OWASP API checklist, secrets, gateway ↔ service boundary | Does not attack real environments |
+| `qa-tester` | Functional test design and execution, coverage against requirements | Does not modify production to make a test pass |
+| `performance-engineer` | Turns declared latency drivers into measurements with a budget a test can check | Does not optimise without measuring, does not touch indexes or schema |
+| `nonfunctional-testing` | Load, resilience, recovery. Synthetic test data | Does not fix what it finds, never copies production data |
+| `platform-devops` | Deployment, Kubernetes, CI/CD, API gateway diagnosis | Does not apply remote changes without confirmation |
+
+### Documentation
+
+| Agent | What it does | Where it stops |
+|---|---|---|
+| `functional-analyst` | Functional Design, in business language | Does not descend into technology |
+| `technical-writer` | Technical Design, every claim anchored to `path:line` | Does not describe the unimplemented in the present tense |
+| `consistency-auditor` | Contrasts document against code, in both directions | **Edits nothing** |
+| `style-editor` | Voice and naturalness, section by section | Does not touch technical content |
+| `document-reviewer` | Template, format, metadata. FIT / NOT FIT verdict | Does not correct, reports |
+
+## How agents are activated
+
+Three ways, escalating from suggestion to guarantee.
+
+**1. Automatically.** Claude reads the `description` field of each agent and delegates when
+your request matches it. You do not have to name anyone:
+
+> The customer deactivation endpoint returns a 500 on retry
+
+That reaches `code-reviewer` or `qa-tester` on its own, because their descriptions say when
+they apply. This is what makes the descriptions in the frontmatter worth writing carefully:
+they are not documentation, they are the routing table.
+
+**2. By name, in natural language.** A suggestion — Claude still decides:
+
+> Use the consistency-auditor subagent on section 5 of the Technical Design
+
+**3. `@agent-<name>` — guaranteed.** Type `@` and pick from the list, or write it out. This
+one always runs that specific agent:
+
+> @agent-security review the new deactivation endpoint
+
+Use the third form when you know exactly who you want and do not want Claude reinterpreting
+the request. The workflows in `.claude/commands/` orchestrate several agents in sequence,
+with a gate between phases.
+
+> Agent files are watched: edit one and the change is picked up within seconds, with no
+> restart. A restart is only needed when you create the `agents` directory for the first
+> time.
+
 ## Installation
 
 Copy the `.claude/` folder, `CLAUDE.md`, `docs/` and `scripts/` into the root of the
@@ -58,7 +124,7 @@ scripts/             automated gates
 /gateway-diagnosis 502 on /api/customers from pre-production
 ```
 
-You can also invoke a single agent: *"run consistency-auditor over section 5"*.
+For a single agent, see [How agents are activated](#how-agents-are-activated) above.
 
 ## The documentation cycle
 

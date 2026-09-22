@@ -33,7 +33,7 @@ the agent team's rules.
 
 Open a Claude Code session at the root of that repository. Check it loaded by typing `/` —
 `feature`, `sync-docs`, `docs-review` and `gateway-diagnosis` should appear. For agents,
-asking for one by name is enough.
+type `@` and the fifteen should be listed.
 
 ---
 
@@ -176,13 +176,25 @@ depend on the agent behaving well.
 
 ## Invoking a single agent
 
-You do not need a command for everything:
+You do not need a command for everything. This is what you will use most day to day.
 
-> Run `consistency-auditor` over section 5 of the Technical Design
-> Have `style-editor` do a pass over section 4.2, report only
-> `security`: review the new deactivation endpoint
+**Often you do not even have to name one.** Claude reads each agent's `description` and
+delegates on its own:
 
-This is what you will use most day to day.
+> The deactivation endpoint returns a 500 on retry
+
+**Naming it is a suggestion**, and Claude still decides:
+
+> Use the consistency-auditor subagent on section 5 of the Technical Design
+
+**`@agent-<name>` is a guarantee.** Type `@`, pick from the list, and that agent runs:
+
+> @agent-security review the new deactivation endpoint
+> @agent-style-editor pass over section 4.2, report only
+
+Use the guaranteed form when you know exactly who you want. The difference matters when two
+agents could plausibly take the request — a performance complaint, for instance, can land
+on `code-reviewer` or on `performance-engineer` depending on how you phrase it.
 
 ---
 
