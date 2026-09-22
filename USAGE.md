@@ -143,18 +143,89 @@ better.
 
 ---
 
-## Step 7 — The feature cycle
+## Step 7 — The development workflows
+
+Four of them, and picking the right one matters more than it looks. What separates them is
+not the list of steps: it is the discipline each one refuses to let you skip.
+
+If you are unsure, start with `/feature` — its first phase is a triage that routes you to
+the right one.
+
+### `/design` — decide before building
+
+```
+/design a settlement service separate from onboarding
+```
+
+Drivers → two or three real options → data → contracts → threat surface of the design → one
+ADR. Nothing is implemented here; the output is a decision someone can disagree with on the
+evidence.
+
+The gate that defines it: **no drivers, no design.** If the 3-5 quality attributes that
+govern the decision cannot be named, the problem is not understood yet, and a decision
+matrix scored against invented drivers is worse than no matrix because it looks rigorous.
+
+Worth knowing: `security` reviews the **design**, not code that does not exist yet. An
+authorisation flaw found in an ADR costs a paragraph; the same flaw found after
+implementation costs a sprint.
+
+### `/feature` — build it
 
 ```
 /feature RF-041 customer deactivation with mandatory reason
 ```
 
-Architecture (if relevant) → implementation → code, security and QA review **in parallel**
-→ traceability → documentation. Blockers go back to the developer and the review phase
-repeats over the new diff.
+Triage → design → data → contract → implementation → reviews in parallel → non-functional →
+traceability → documentation. Several phases are conditional.
 
-If the change is small and local, skip the command and ask the `developer` directly.
-`/feature` earns its keep when the change crosses services or touches a contract.
+The gate that defines it: **skipping a phase is a decision, and it gets stated in the
+closing report.** A phase silently omitted is indistinguishable from a phase forgotten.
+
+Two of those phases exist specifically to stop decisions being taken by accident.
+`data-architect` and `contract-designer` run before implementation because `developer` is
+forbidden from deciding a data model or a contract. Skip them where they apply and the
+decision still gets made — by whoever happens to be writing the code, and nowhere in
+writing.
+
+### `/bugfix` — something that worked no longer does
+
+```
+/bugfix duplicate charge when the payment gateway times out
+```
+
+Reproduce → failing test → root cause → minimal fix → verify → **sweep for the same defect
+elsewhere**.
+
+The gate that defines it: **no reproduction, no fix.** A fix applied to a bug nobody could
+trigger cannot be verified, so nobody will ever know whether it worked.
+
+And the ordering in B1 is the whole point: the test goes in before the fix. Write the fix
+first and you get a test written to match whatever the code now does, which confirms the fix
+instead of checking it.
+
+Phase B5 is the one people skip and the one that pays: a defect that appeared once has
+usually been copied two or three times.
+
+### `/refactor` — same behaviour, better shape
+
+```
+/refactor split the 900-line handler in svc-customers
+```
+
+Boundary → characterisation tests → restructure → verify the invariant.
+
+The gate that defines it: **if a test has to change, it is not a refactor.** That is how an
+accidental behaviour change normally ships — the test goes red, somebody "adjusts" it, and
+the regression looks green. The check is explicit and mechanical:
+
+```bash
+git diff --name-only <base> -- '*test*' '*spec*'
+```
+
+Empty output is the proof. Anything else needs an explanation before the change is accepted.
+
+If coverage of the affected area is thin, writing those characterisation tests *is* the
+first half of the task. You cannot refactor what you cannot verify.
 
 ---
 

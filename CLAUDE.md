@@ -59,12 +59,19 @@ The agents' instructions are in English; what they produce follows the client's 
 
 ## Workflows
 
-| Command | For what |
-|---|---|
-| `/feature <description>` | full cycle: design → implementation → reviews → documentation |
-| `/sync-docs <scope>` | documentation cycle with its five rounds and its gates |
-| `/docs-review <path>` | review a document without rewriting it |
-| `/gateway-diagnosis <symptom>` | guided diagnosis of deployment or routing |
+| Command | For what | Distinctive gate |
+|---|---|---|
+| `/design <what>` | decide before building: drivers, options, data, contracts, threat surface, ADR | no drivers, no design |
+| `/feature <description>` | full cycle: design → data → contract → implementation → reviews → documentation | skipping a phase is a decision and gets stated |
+| `/bugfix <symptom>` | reproduce, failing test first, root cause, minimal fix, sweep for the same defect | no reproduction, no fix |
+| `/refactor <what>` | restructure with no behaviour change | if a test has to change, it is not a refactor |
+| `/sync-docs <scope>` | documentation cycle with its five rounds | zero blockers before delivery |
+| `/docs-review <path>` | review a document without rewriting it | reports, does not correct |
+| `/gateway-diagnosis <symptom>` | guided diagnosis of deployment or routing | diagnose before changing |
+
+The four development workflows are not interchangeable, and the difference is the
+discipline each one enforces rather than the steps it lists. `/feature` opens F0 with a
+triage that routes to the right one, so when in doubt start there.
 
 The documentation cycle is **R0 baseline → R1 audit → R2 writing → R3 verification → R4
 style → R5 delivery**, and every arrow is a gate. The style round comes after the content is

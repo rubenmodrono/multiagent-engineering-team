@@ -1,6 +1,6 @@
 # Multiagent engineering team
 
-Fifteen specialised agents, four workflows and two automated gates, on Claude Code. Covers
+Fifteen specialised agents, seven workflows and two automated gates, on Claude Code. Covers
 the engineering cycle and, above all, keeping the Functional Design and Technical Design
 deliverables consistent with the code.
 
@@ -79,7 +79,7 @@ session there.
 ```
 .claude/agents/      15 specialised agents
 .claude/skills/      shared knowledge (templates, style, traceability, external sources)
-.claude/commands/    the four workflows
+.claude/commands/    the seven workflows
 .claude/settings.json permissions: reads free, writes against environments need confirmation
 docs/templates/      template profile extracted from the client's documents
 docs/deliverables/   current versions of the documents
@@ -118,13 +118,36 @@ scripts/             automated gates
 ## Usage
 
 ```
+/design a settlement service separate from onboarding
 /feature RF-041 customer deactivation with mandatory reason
+/bugfix duplicate charge when the payment gateway times out
+/refactor split the 900-line handler in svc-customers
 /sync-docs version 2.4
 /docs-review docs/deliverables/technical-design/DT-PROJ-001_v2.4.md
 /gateway-diagnosis 502 on /api/customers from pre-production
 ```
 
 For a single agent, see [How agents are activated](#how-agents-are-activated) above.
+
+### The four development workflows
+
+They are not interchangeable, and what separates them is the discipline each enforces, not
+the list of steps. Each one has a gate that defines it:
+
+| Workflow | When | The gate that defines it |
+|---|---|---|
+| `/design` | The shape is not decided yet, and the change crosses services, data or contracts | **No drivers, no design.** A decision matrix scored on invented drivers looks rigorous and is worse than none |
+| `/feature` | Building something new on a decided shape | **Skipping a phase is a decision** and gets stated in the closing report. A phase silently omitted looks exactly like one forgotten |
+| `/bugfix` | Something that worked no longer does | **No reproduction, no fix.** And the failing test goes in before the fix — write the fix first and the test just confirms whatever the code now does |
+| `/refactor` | Restructuring with no behaviour change | **If a test has to change, it is not a refactor.** That is how an accidental behaviour change normally ships: the test goes red, it gets "adjusted", the regression looks green |
+
+`/feature` opens with a triage step that routes to the others, so when in doubt start there.
+
+Two phases inside `/feature` exist purely to stop decisions being taken by default:
+`data-architect` and `contract-designer` run before implementation because `developer` is
+explicitly forbidden from deciding a data model or a contract. Skip them where they apply
+and the decision still gets made — by whoever is writing the code at the time, and without
+being written down.
 
 ## The documentation cycle
 
